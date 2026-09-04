@@ -99,6 +99,8 @@ func gitOutput(dir string, args ...string) (string, error) {
 	return strings.TrimSpace(string(out)), nil
 }
 
+var version = "dev"
+
 const ansiGreen = "\033[32m"
 const ansiYellow = "\033[33m"
 const ansiRed = "\033[31m"
@@ -108,8 +110,9 @@ const ansiReset = "\033[0m"
 
 func main() {
 	app := &cli.Command{
-		Name:  "wp",
-		Usage: "Git worktree workspace manager",
+		Name:    "wp",
+		Usage:   "Git worktree workspace manager",
+		Version: version,
 		Commands: []*cli.Command{
 			{
 				Name:      "init",
