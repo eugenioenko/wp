@@ -113,6 +113,9 @@ func main() {
 		Name:    "wp",
 		Usage:   "Git worktree workspace manager",
 		Version: version,
+		Action: func(_ context.Context, cmd *cli.Command) error {
+			return cli.ShowAppHelp(cmd)
+		},
 		Commands: []*cli.Command{
 			{
 				Name:      "init",
