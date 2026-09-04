@@ -5,6 +5,12 @@ Git worktree workspace manager. Group worktrees from multiple repos into named w
 ## Install
 
 ```bash
+curl -sSfL https://raw.githubusercontent.com/eugenioenko/wp/main/install.sh | sh
+```
+
+Or with Go:
+
+```bash
 go install github.com/eugenioenko/wp@latest
 ```
 
@@ -14,7 +20,7 @@ go install github.com/eugenioenko/wp@latest
 wp init
 ```
 
-Creates `~/.config/wp/config.toml`:
+Edit `~/.config/wp/config.toml` to register your repos:
 
 ```toml
 workspace_root = "~/Workspaces"
@@ -36,7 +42,42 @@ wp remove issue-1 backend      # Remove a repo worktree
 wp cleanup issue-1             # Remove all worktrees and workspace dir
 ```
 
-Open the workspace folder in your terminal multiplexer of choice (herdr, zellij, tmux, screen) and work from there.
+## Workflow
+
+```bash
+wp create issue-123
+wp add issue-123 myapp
+wp add issue-123 backend
+
+# cd into the workspace
+cd ~/Workspaces/issue-123
+
+# open your multiplexer (herdr, zellij, tmux, screen)
+herdr
+
+# when done
+wp cleanup issue-123
+```
+
+Tip: add a shell alias for quick navigation:
+
+```bash
+wpcd() { cd ~/Workspaces/"$1"; }
+```
+
+## Commands
+
+| Command | Description |
+|---|---|
+| `wp init` | Create default config file |
+| `wp create <name>` | Create a new workspace |
+| `wp add <name> <repo>` | Add a repo worktree to a workspace |
+| `wp remove <name> <repo>` | Remove a repo worktree from a workspace |
+| `wp status <name>` | Show branches and dirty state |
+| `wp list` | List all workspaces |
+| `wp cleanup <name>` | Remove all worktrees and delete workspace |
+| `wp help` | Show help |
+| `wp --version` | Print version |
 
 ## License
 
