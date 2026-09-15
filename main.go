@@ -118,9 +118,15 @@ func main() {
 		},
 		Commands: []*cli.Command{
 			{
-				Name:      "init",
-				Usage:     "Create default config file",
-				Action:    cmdInit,
+				Name:   "init",
+				Usage:  "Create default config file",
+				Action: cmdInit,
+			},
+			{
+				Name:      "start",
+				Usage:     "Create a workspace and add repo worktrees",
+				ArgsUsage: "<name> <repo> [repo...]",
+				Action:    cmdStart,
 			},
 			{
 				Name:      "create",
@@ -201,7 +207,10 @@ func cmdCreate(_ context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+	return createWorkspace(cfg, name)
+}
 
+func createWorkspace(cfg *Config, name string) error {
 	wsPath := workspacePath(cfg, name)
 	if _, err := os.Stat(wsPath); err == nil {
 		return fmt.Errorf("workspace %q already exists at %s", name, wsPath)
@@ -225,7 +234,10 @@ func cmdAdd(_ context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+	return addRepo(cfg, workspace, repo)
+}
 
+func addRepo(cfg *Config, workspace, repo string) error {
 	src, err := repoSource(cfg, repo)
 	if err != nil {
 		return err
@@ -256,6 +268,29 @@ func cmdAdd(_ context.Context, cmd *cli.Command) error {
 
 	fmt.Printf("%s✓%s Added %s%s%s to workspace %s (branch: %s)\n",
 		ansiGreen, ansiReset, ansiBold, repo, ansiReset, workspace, branch)
+	return nil
+}
+
+func cmdStart(_ context.Context, cmd *cli.Command) error {
+	name := cmd.Args().First()
+	repos := cmd.Args().Tail()
+	if name == "" || len(repos) == 0 {
+		return fmt.Errorf("usage: wp start <name> <repo> [repo...]")
+	}
+
+	cfg, err := loadConfig()
+	if err != nil {
+		return err
+	}
+
+	if err := createWorkspace(cfg, name); err != nil {
+		return err
+	}
+	for _, repo := range repos {
+		if err := addRepo(cfg, name, repo); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
