@@ -33,6 +33,7 @@ backend = "~/Documents/backend"
 ## Usage
 
 ```bash
+wp start issue-1 myapp backend # Create workspace and add both repos
 wp create issue-1              # Create a workspace
 wp add issue-1 myapp           # Add repo worktree (creates branch issue-1)
 wp add issue-1 backend         # Add another repo
@@ -45,9 +46,7 @@ wp cleanup issue-1             # Remove all worktrees and workspace dir
 ## Workflow
 
 ```bash
-wp create issue-123
-wp add issue-123 myapp
-wp add issue-123 backend
+wp start issue-123 myapp backend
 
 # cd into the workspace
 cd ~/Workspaces/issue-123
@@ -70,6 +69,7 @@ wpcd() { cd ~/Workspaces/"$1"; }
 | Command | Description |
 |---|---|
 | `wp init` | Create default config file |
+| `wp start <name> <repo> [repo...]` | Create a workspace and add repo worktrees |
 | `wp create <name>` | Create a new workspace |
 | `wp add <name> <repo>` | Add a repo worktree to a workspace |
 | `wp remove <name> <repo>` | Remove a repo worktree from a workspace |
