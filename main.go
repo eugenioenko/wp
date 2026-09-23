@@ -109,10 +109,22 @@ const ansiBold = "\033[1m"
 const ansiReset = "\033[0m"
 
 func main() {
-	app := &cli.Command{
-		Name:    "wp",
-		Usage:   "Git worktree workspace manager",
-		Version: version,
+	if err := newApp().Run(context.Background(), os.Args); err != nil {
+		fmt.Fprintf(os.Stderr, "%serror:%s %v\n", ansiRed, ansiReset, err)
+		os.Exit(1)
+	}
+}
+
+func newApp() *cli.Command {
+	return &cli.Command{
+		Name:                  "wp",
+		Usage:                 "Git worktree workspace manager",
+		Version:               version,
+		EnableShellCompletion: true,
+		ConfigureShellCompletionCommand: func(cmd *cli.Command) {
+			cmd.Hidden = false
+			cmd.Usage = "Generate shell completion scripts"
+		},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			return cli.ShowAppHelp(cmd)
 		},
@@ -123,10 +135,11 @@ func main() {
 				Action: cmdInit,
 			},
 			{
-				Name:      "start",
-				Usage:     "Create a workspace and add repo worktrees",
-				ArgsUsage: "<name> <repo> [repo...]",
-				Action:    cmdStart,
+				Name:          "start",
+				Usage:         "Create a workspace and add repo worktrees",
+				ArgsUsage:     "<name> <repo> [repo...]",
+				Action:        cmdStart,
+				ShellComplete: completeStart,
 			},
 			{
 				Name:      "create",
@@ -135,22 +148,25 @@ func main() {
 				Action:    cmdCreate,
 			},
 			{
-				Name:      "add",
-				Usage:     "Add a repo worktree to a workspace",
-				ArgsUsage: "<workspace> <repo>",
-				Action:    cmdAdd,
+				Name:          "add",
+				Usage:         "Add a repo worktree to a workspace",
+				ArgsUsage:     "<workspace> <repo>",
+				Action:        cmdAdd,
+				ShellComplete: completeAdd,
 			},
 			{
-				Name:      "remove",
-				Usage:     "Remove a repo worktree from a workspace",
-				ArgsUsage: "<workspace> <repo>",
-				Action:    cmdRemove,
+				Name:          "remove",
+				Usage:         "Remove a repo worktree from a workspace",
+				ArgsUsage:     "<workspace> <repo>",
+				Action:        cmdRemove,
+				ShellComplete: completeRemove,
 			},
 			{
-				Name:      "cleanup",
-				Usage:     "Remove all worktrees and delete a workspace",
-				ArgsUsage: "<name>",
-				Action:    cmdCleanup,
+				Name:          "cleanup",
+				Usage:         "Remove all worktrees and delete a workspace",
+				ArgsUsage:     "<name>",
+				Action:        cmdCleanup,
+				ShellComplete: completeWorkspace,
 			},
 			{
 				Name:   "list",
@@ -158,17 +174,13 @@ func main() {
 				Action: cmdList,
 			},
 			{
-				Name:      "status",
-				Usage:     "Show status of a workspace",
-				ArgsUsage: "<name>",
-				Action:    cmdStatus,
+				Name:          "status",
+				Usage:         "Show status of a workspace",
+				ArgsUsage:     "<name>",
+				Action:        cmdStatus,
+				ShellComplete: completeWorkspace,
 			},
 		},
-	}
-
-	if err := app.Run(context.Background(), os.Args); err != nil {
-		fmt.Fprintf(os.Stderr, "%serror:%s %v\n", ansiRed, ansiReset, err)
-		os.Exit(1)
 	}
 }
 

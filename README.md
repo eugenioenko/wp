@@ -43,6 +43,25 @@ wp remove issue-1 backend      # Remove a repo worktree
 wp cleanup issue-1             # Remove all worktrees and workspace dir
 ```
 
+## Shell completion
+
+`wp` can complete command names, configured repo names, and existing workspace names. Repo names come from `[repos]` in `~/.config/wp/config.toml`; workspace names come from directories under `workspace_root`. Suggestions update when the config or workspaces change.
+
+For Bash, add this to `~/.bashrc` (Bash completion must be installed):
+
+```bash
+source <(wp completion bash)
+```
+
+For Zsh, add this to `~/.zshrc` after enabling `compinit`:
+
+```zsh
+autoload -Uz compinit && compinit
+source <(wp completion zsh)
+```
+
+Open a new shell, or run the lines above in the current shell. `wp start` and `wp create` leave new workspace names free-form; `wp add`, `wp remove`, `wp status`, and `wp cleanup` suggest existing workspaces.
+
 ## Workflow
 
 ```bash
@@ -76,6 +95,7 @@ wpcd() { cd ~/Workspaces/"$1"; }
 | `wp status <name>` | Show branches and dirty state |
 | `wp list` | List all workspaces |
 | `wp cleanup <name>` | Remove all worktrees and delete workspace |
+| `wp completion <shell>` | Generate a shell completion script |
 | `wp help` | Show help |
 | `wp --version` | Print version |
 
